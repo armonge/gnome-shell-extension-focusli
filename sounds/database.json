@@ -1,0 +1,34 @@
+{
+  "sounds": [
+    {
+      "name": "Rain",
+      "uri": "http://soundbible.com/grab.php?id=2065&type=mp3",
+      "icon": "weather-showers-symbolic"
+    },
+    {
+      "name": "Wind",
+      "uri": "http://soundbible.com/grab.php?id=1247&type=mp3",
+      "icon": "weather-fog-symbolic"
+    },
+    {
+      "name": "Summer_Night",
+      "uri": "http://soundbible.com/grab.php?id=2083&type=mp3",
+      "icon": "weather-clear-night-symbolic"
+    },
+    {
+      "name": "Coffee_Shop",
+      "uri": "http://soundbible.com/grab.php?id=1664&type=mp3",
+      "icon": "system-users-symbolic"
+    },
+    {
+      "name": "White_Noise",
+      "uri": "http://soundbible.com/grab.php?id=1611&type=mp3",
+      "icon": "utilities-system-monitor-symbolic"
+    },
+    {
+      "name": "Fireplace",
+      "uri": "http://soundbible.com/grab.php?id=1543&type=mp3",
+      "icon": "keyboard-brightness-symbolic"
+    }
+  ]
+}
