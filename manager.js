@@ -32,13 +32,13 @@ const Manager = new Lang.Class({
         'sounds-loaded': {},
     },
 
-    _init() {
+    _init: function() {
         this.parent();
 
         this.loadSounds();
     },
 
-    loadSounds() {
+    loadSounds: function() {
         let file = Gio.File.new_for_path(DB_PATH);
         file.load_contents_async(null, (file, res) => {
             let contents;
@@ -87,7 +87,7 @@ const Manager = new Lang.Class({
         });
     },
 
-    soundExists(sound) {
+    soundExists: function(sound) {
         let path = GLib.build_filenamev([SOUNDS_BASE_PATH, sound.name + ".mp3"]);
         let file = Gio.File.new_for_path(path);
 

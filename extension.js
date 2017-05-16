@@ -53,7 +53,7 @@ const Popup = new Lang.Class({
         this.manager.connect('sounds-loaded', this._onSoundsReady.bind(this));
     },
 
-    setLoading(state) {
+    setLoading: function(state) {
         if (!state) {
             this.spinner.actor.destroy();
             return;

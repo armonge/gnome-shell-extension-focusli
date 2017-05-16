@@ -104,15 +104,15 @@ const SoundPlayer = new Lang.Class({
         }));
     },
 
-    play() {
+    play: function() {
         this.playbin.set_state(Gst.State.PLAYING);
     },
 
-    pause() {
+    pause: function() {
         this.playbin.set_state(Gst.State.NULL);
     },
 
-    setVolume(value) {
+    setVolume: function(value) {
         this.playbin.set_volume(GstAudio.StreamVolumeFormat.LINEAR, value);
 
         let [rv, state, pstate] = this.playbin.get_state(Gst.State.NULL);
@@ -123,7 +123,7 @@ const SoundPlayer = new Lang.Class({
         }
     },
 
-    _onMessageReceived(message) {
+    _onMessageReceived: function(message) {
         if (message.type == Gst.MessageType.SEGMENT_DONE) {
             this.playbin.seek_simple(Gst.Format.TIME, Gst.SeekFlags.SEGMENT, 0);
         }
@@ -137,7 +137,7 @@ const SoundPlayer = new Lang.Class({
         return true;
     },
 
-    getUri(sound) {
+    getUri: function(sound) {
         /* FIXME: Extract the real extension of the file instead of hardcoding .mp3. */
         let path = GLib.build_filenamev([Manager.SOUNDS_BASE_PATH, sound.name + ".mp3"]);
         let file = Gio.File.new_for_path(path);
