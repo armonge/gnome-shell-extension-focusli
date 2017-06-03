@@ -21,6 +21,7 @@ var Gst = imports.gi.Gst;
 const Animation = imports.ui.animation;
 const Extension = imports.misc.extensionUtils.getCurrentExtension();
 const Gio = imports.gi.Gio;
+const GLib = imports.gi.GLib;
 const Lang = imports.lang;
 const Gtk = imports.gi.Gtk;
 const St = imports.gi.St;
@@ -96,12 +97,14 @@ const Button = new Lang.Class({
         let box = new St.BoxLayout({
             style_class: 'panel-status-menu-box'
         });
+
+        let icon_path = GLib.build_filenamev([Extension.dir.get_path(), "icon.png"]);
+        let gicon = Gio.Icon.new_for_string(icon_path);
         let icon = new St.Icon({
-            icon_name: 'dialog-information-symbolic',
+            gicon: gicon,
             style_class: 'system-status-icon'
         });
         box.add_child(icon);
-        box.add_child(PopupMenu.arrowIcon(St.Side.BOTTOM));
         this.actor.add_child(box);
 
         let popup = new Popup();
