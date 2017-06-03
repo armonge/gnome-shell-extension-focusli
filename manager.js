@@ -45,11 +45,6 @@ const Manager = new Lang.Class({
             try {
                 contents = file.load_contents_finish(res)[1].toString();
                 this.sounds = JSON.parse(contents)['sounds'];
-                this.sounds.forEach(Lang.bind(this, function(sound) {
-                    if (!this.soundExists(sound)) {
-                        this._downloadSound(sound);
-                    }
-                }));
 
                 this.emit('sounds-loaded');
             } catch (e) {
@@ -57,40 +52,4 @@ const Manager = new Lang.Class({
             }
         });
     },
-
-    _downloadSound: function(sound) {
-        let stream = Gio.File.new_for_uri(sound.uri);
-        stream.read_async(GLib.PRIORITY_DEFAULT, null, function(src,res) {
-            let inputStream;
-            try {
-                inputStream = stream.read_finish(res);
-            } catch(e) {
-                return;
-            }
-
-            let destination = GLib.build_filenamev([SOUNDS_BASE_PATH, sound.name + ".mp3"]);
-            let out = Gio.File.new_for_path(destination);
-            out.replace_async(null, false, Gio.FileCreateFlags.NONE, GLib.PRIORITY_DEFAULT, null,
-            Lang.bind(this, function(src, res) {
-                let outputStream = out.replace_finish(res);
-
-                outputStream.splice_async(inputStream,
-                    Gio.OutputStreamSpliceFlags.CLOSE_SOURCE | Gio.OutputStreamSpliceFlags.CLOSE_TARGET,
-                    GLib.PRIORITY_DEFAULT, null, Lang.bind(this, function(src, res) {
-                        try {
-                            outputStream.splice_finish(res);
-                        } catch (e) {
-                            return;
-                        }
-                    }));
-            }));
-        });
-    },
-
-    soundExists: function(sound) {
-        let path = GLib.build_filenamev([SOUNDS_BASE_PATH, sound.name + ".mp3"]);
-        let file = Gio.File.new_for_path(path);
-
-        return file.query_exists(null);
-    }
 })

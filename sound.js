@@ -91,7 +91,7 @@ const SoundPlayer = new Lang.Class({
 
     _init: function (sound) {
         this.playbin = Gst.ElementFactory.make("playbin", sound.name);
-        this.playbin.set_property("uri", this.getUri(sound));
+        this.playbin.set_property("uri", sound.uri);
         this.sink = Gst.ElementFactory.make("pulsesink", "sink");
         this.playbin.set_property("audio-sink", this.sink);
 
@@ -135,15 +135,5 @@ const SoundPlayer = new Lang.Class({
         }
 
         return true;
-    },
-
-    getUri: function(sound) {
-        /* FIXME: Extract the real extension of the file instead of hardcoding .mp3. */
-        let path = GLib.build_filenamev([Manager.SOUNDS_BASE_PATH, sound.name + ".mp3"]);
-        let file = Gio.File.new_for_path(path);
-        if (file.query_exists(null))
-            return file.get_uri();
-        else
-            return sound.uri;
-    },
+    }
 })
