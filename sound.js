@@ -91,7 +91,7 @@ const SoundPlayer = new Lang.Class({
 
     _init: function (sound) {
         this.playbin = Gst.ElementFactory.make("playbin", sound.name);
-        this.playbin.set_property("uri", sound.uri);
+        this.playbin.set_property("uri", this.getUri (sound));
         this.sink = Gst.ElementFactory.make("pulsesink", "sink");
         this.playbin.set_property("audio-sink", this.sink);
 
@@ -135,5 +135,9 @@ const SoundPlayer = new Lang.Class({
         }
 
         return true;
-    }
+    },
+
+    getUri: function (sound) {
+        return Extension.dir.get_child('sounds').get_uri() + "/" + sound.uri;
+    },
 })
