@@ -2,32 +2,32 @@
   "sounds": [
     {
       "name": "Rain",
-      "uri": "http://soundbible.com/grab.php?id=2065&type=mp3",
+      "uri": "Rain.ogg",
       "icon": "weather-showers-symbolic"
     },
     {
       "name": "Wind",
-      "uri": "http://soundbible.com/grab.php?id=1247&type=mp3",
+      "uri": "Wind.ogg",
       "icon": "weather-fog-symbolic"
     },
     {
       "name": "Summer_Night",
-      "uri": "http://soundbible.com/grab.php?id=2083&type=mp3",
+      "uri": "Summer_Night.ogg",
       "icon": "weather-clear-night-symbolic"
     },
     {
       "name": "Coffee_Shop",
-      "uri": "http://soundbible.com/grab.php?id=1664&type=mp3",
+      "uri": "Coffee_Shop.ogg",
       "icon": "system-users-symbolic"
     },
     {
       "name": "White_Noise",
-      "uri": "http://soundbible.com/grab.php?id=1611&type=mp3",
+      "uri": "White_Noise.ogg",
       "icon": "utilities-system-monitor-symbolic"
     },
     {
       "name": "Fireplace",
-      "uri": "http://soundbible.com/grab.php?id=1543&type=mp3",
+      "uri": "Fireplace.ogg",
       "icon": "keyboard-brightness-symbolic"
     }
   ]
