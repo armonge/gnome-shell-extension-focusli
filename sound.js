@@ -138,6 +138,7 @@ const SoundPlayer = new Lang.Class({
     },
 
     getUri: function (sound) {
-        return Extension.dir.get_child('sounds').get_uri() + "/" + sound.uri;
+        /* All URIs are relative to $HOME. */
+        return Gst.filename_to_uri (sound.uri);
     },
 })
