@@ -110,6 +110,7 @@ const SoundPlayer = new Lang.Class({
 
     pause: function() {
         this.playbin.set_state(Gst.State.NULL);
+        this.prerolled = false;
     },
 
     setVolume: function(value) {
