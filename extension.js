@@ -31,7 +31,7 @@ const PanelMenu = imports.ui.panelMenu;
 const PopupMenu = imports.ui.popupMenu;
 const Sound = Extension.imports.sound;
 
-Gst.init(null, 0);
+Gst.init(null);
 
 const Popup = new Lang.Class({
     Name: 'Popup',
