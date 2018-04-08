@@ -21,7 +21,7 @@ const Gio = imports.gi.Gio;
 const GLib = imports.gi.GLib;
 const GObject = imports.gi.GObject;
 const Gst = imports.gi.Gst;
-const GstAudio = imports.gi.GstAudio;
+const GstPlayer = imports.gi.GstPlayer;
 const Lang = imports.lang;
 const Manager = Extension.imports.manager;
 const Slider = imports.ui.slider;
@@ -48,6 +48,11 @@ const SoundBox = new Lang.Class({
         return this._sensitive;
     },
 
+    getUri: function (sound) {
+        /* All URIs are relative to $HOME. */
+        return Gst.filename_to_uri (sound.uri);
+    },
+
     _init: function (sound) {
         this.parent ({
             style_class: 'soundbox flat',
@@ -66,11 +71,12 @@ const SoundBox = new Lang.Class({
 
         slider.connect('value-changed', this._onValueChanged.bind (this));
 
-        this.player = new SoundPlayer(sound);
+        this.player = new GstPlayer.Player();
+        this.player.set_uri (this.getUri(sound));
 
         icon.connect('button-press-event', Lang.bind(this, function() {
             if (this.sensitive) {
-                this.player.pause();
+                this.player.stop();
             } else {
                 this.player.play();
             }
@@ -80,66 +86,8 @@ const SoundBox = new Lang.Class({
     },
 
     _onValueChanged: function(slider, value, property) {
-        this.player.setVolume(value);
+        this.player.set_volume(value);
 
         this.sensitive = (value > 0);
     },
 });
-
-const SoundPlayer = new Lang.Class({
-    Name: 'SoundPlayer',
-
-    _init: function (sound) {
-        this.playbin = Gst.ElementFactory.make("playbin", sound.name);
-        this.playbin.set_property("uri", this.getUri (sound));
-        this.sink = Gst.ElementFactory.make("pulsesink", "sink");
-        this.playbin.set_property("audio-sink", this.sink);
-
-        this.prerolled = false;
-        let bus = this.playbin.get_bus();
-        bus.add_signal_watch();
-        bus.connect("message", Lang.bind(this, function(bus, msg) {
-            if (msg != null)
-                this._onMessageReceived(msg);
-        }));
-    },
-
-    play: function() {
-        this.playbin.set_state(Gst.State.PLAYING);
-    },
-
-    pause: function() {
-        this.playbin.set_state(Gst.State.NULL);
-        this.prerolled = false;
-    },
-
-    setVolume: function(value) {
-        this.playbin.set_volume(GstAudio.StreamVolumeFormat.LINEAR, value);
-
-        let [rv, state, pstate] = this.playbin.get_state(Gst.State.NULL);
-        if (value == 0) {
-            this.playbin.set_state(Gst.State.NULL);
-        } else if (state != Gst.State.PLAYING) {
-            this.playbin.set_state (Gst.State.PLAYING);
-        }
-    },
-
-    _onMessageReceived: function(message) {
-        if (message.type == Gst.MessageType.SEGMENT_DONE) {
-            this.playbin.seek_simple(Gst.Format.TIME, Gst.SeekFlags.SEGMENT, 0);
-        }
-        if (message.type == Gst.MessageType.ASYNC_DONE) {
-            if (!this.prerolled) {
-                this.playbin.seek_simple (Gst.Format.TIME, (Gst.SeekFlags.FLUSH | Gst.SeekFlags.SEGMENT), 0);
-                this.prerolled = true;
-            }
-        }
-
-        return true;
-    },
-
-    getUri: function (sound) {
-        /* All URIs are relative to $HOME. */
-        return Gst.filename_to_uri (sound.uri);
-    },
-})
