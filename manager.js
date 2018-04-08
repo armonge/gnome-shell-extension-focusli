@@ -25,7 +25,7 @@ const Lang = imports.lang;
 const SOUNDS_BASE_PATH = Extension.dir.get_child('sounds').get_path();
 const DB_PATH = GLib.build_filenamev([SOUNDS_BASE_PATH, "database.json"]);
 
-const Manager = new Lang.Class({
+var Manager = new Lang.Class({
     Name: 'Manager',
     Extends: GObject.Object,
     Signals: {

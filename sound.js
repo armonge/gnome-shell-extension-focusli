@@ -29,7 +29,7 @@ const St = imports.gi.St;
 
 const DEFAULT_VOLUME = 0.5;
 
-const SoundBox = new Lang.Class({
+var SoundBox = new Lang.Class({
     Name: 'SoundBox',
     Extends: St.BoxLayout,
     Properties: {
