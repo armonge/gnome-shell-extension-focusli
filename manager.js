@@ -20,36 +20,36 @@ const Extension = imports.misc.extensionUtils.getCurrentExtension();
 const GObject = imports.gi.GObject;
 const GLib = imports.gi.GLib;
 const Gio = imports.gi.Gio;
-const Lang = imports.lang;
 
-const SOUNDS_BASE_PATH = Extension.dir.get_child('sounds').get_path();
+const SOUNDS_BASE_PATH = Extension.dir.get_child("sounds").get_path();
 const DB_PATH = GLib.build_filenamev([SOUNDS_BASE_PATH, "database.json"]);
 
-var Manager = new Lang.Class({
-    Name: 'Manager',
-    Extends: GObject.Object,
+var Manager = GObject.registerClass(
+  {
     Signals: {
-        'sounds-loaded': {},
-    },
+      "sounds-loaded": {}
+    }
+  },
+  class Manager extends GObject.Object {
+    _init() {
+      super._init();
 
-    _init: function() {
-        this.parent();
+      this.loadSounds();
+    }
 
-        this.loadSounds();
-    },
+    loadSounds() {
+      let file = Gio.File.new_for_path(DB_PATH);
+      file.load_contents_async(null, (file, res) => {
+        let contents;
+        try {
+          contents = file.load_contents_finish(res)[1].toString();
+          this.sounds = JSON.parse(contents)["sounds"];
 
-    loadSounds: function() {
-        let file = Gio.File.new_for_path(DB_PATH);
-        file.load_contents_async(null, (file, res) => {
-            let contents;
-            try {
-                contents = file.load_contents_finish(res)[1].toString();
-                this.sounds = JSON.parse(contents)['sounds'];
-
-                this.emit('sounds-loaded');
-            } catch (e) {
-                log(e);
-            }
-        });
-    },
-})
+          this.emit("sounds-loaded");
+        } catch (e) {
+          log(e);
+        }
+      });
+    }
+  }
+);
