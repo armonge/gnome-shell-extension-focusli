@@ -47,7 +47,9 @@ const Popup = class Popup extends PopupMenu.PopupBaseMenuItem {
     this.setLoading(true);
 
     this.manager = new Manager.Manager();
-    this.manager.connect("sounds-loaded", this._onSoundsReady.bind(this));
+    this.manager.connect("sounds-loaded", () => {
+      this._onSoundsReady();
+    });
   }
 
   setLoading(state) {
