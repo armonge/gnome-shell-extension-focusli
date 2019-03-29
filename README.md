@@ -13,4 +13,4 @@ Introduction: http://feborg.es/focusli
 * The original sounds are mp3 files. Make sure you have the proper plugins/codecs.
 * When disabling a sound or setting the volume to 0, the player stops, saving you processing time.
 
-For features and bug reports, please file an issue at https://github.com/felipeborges/gnome-shell-extension-focusli/issues
+For features and bug reports, please file an issue at https://github.com/armonge/gnome-shell-extension-focusli/issues
