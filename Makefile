@@ -1,4 +1,4 @@
-TARGET = "focusli@feborg.es.zip"
+TARGET = "focusli@armonge.info.zip"
 
 DIST_FILES = \
 	extension.js		\
