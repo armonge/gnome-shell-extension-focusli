@@ -2,32 +2,32 @@
   "sounds": [
     {
       "name": "Rain",
-      "uri": ".local/share/gnome-shell/extensions/focusli@feborg.es/sounds/Rain.ogg",
+      "uri": ".local/share/gnome-shell/extensions/focusli@armonge.info/sounds/Rain.ogg",
       "icon": "weather-showers-symbolic"
     },
     {
       "name": "Wind",
-      "uri": ".local/share/gnome-shell/extensions/focusli@feborg.es/sounds/Wind.ogg",
+      "uri": ".local/share/gnome-shell/extensions/focusli@armonge.info/sounds/Wind.ogg",
       "icon": "weather-fog-symbolic"
     },
     {
       "name": "Summer_Night",
-      "uri": ".local/share/gnome-shell/extensions/focusli@feborg.es/sounds/Summer_Night.ogg",
+      "uri": ".local/share/gnome-shell/extensions/focusli@armonge.info/sounds/Summer_Night.ogg",
       "icon": "weather-clear-night-symbolic"
     },
     {
       "name": "Coffee_Shop",
-      "uri": ".local/share/gnome-shell/extensions/focusli@feborg.es/sounds/Coffee_Shop.ogg",
+      "uri": ".local/share/gnome-shell/extensions/focusli@armonge.info/sounds/Coffee_Shop.ogg",
       "icon": "system-users-symbolic"
     },
     {
       "name": "White_Noise",
-      "uri": ".local/share/gnome-shell/extensions/focusli@feborg.es/sounds/White_Noise.ogg",
+      "uri": ".local/share/gnome-shell/extensions/focusli@armonge.info/sounds/White_Noise.ogg",
       "icon": "utilities-system-monitor-symbolic"
     },
     {
       "name": "Fireplace",
-      "uri": ".local/share/gnome-shell/extensions/focusli@feborg.es/sounds/Fireplace.ogg",
+      "uri": ".local/share/gnome-shell/extensions/focusli@armonge.info/sounds/Fireplace.ogg",
       "icon": "keyboard-brightness-symbolic"
     }
   ]
