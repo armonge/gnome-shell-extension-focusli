@@ -33,21 +33,21 @@ var Manager = GObject.registerClass(
   class Manager extends GObject.Object {
     _init() {
       super._init();
-
       this.loadSounds();
     }
 
     loadSounds() {
-      let file = Gio.File.new_for_path(DB_PATH);
+      const file = Gio.File.new_for_path(DB_PATH);
       file.load_contents_async(null, (file, res) => {
         let contents;
         try {
           contents = file.load_contents_finish(res)[1].toString();
           this.sounds = JSON.parse(contents)["sounds"];
-
           this.emit("sounds-loaded");
         } catch (e) {
+          log("No sounds loaded");
           log(e);
+          return;
         }
       });
     }

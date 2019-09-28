@@ -64,10 +64,10 @@ var SoundBox = GObject.registerClass(
       });
       this.add_child(icon);
 
-      let slider = new Slider.Slider(DEFAULT_VOLUME);
-      this.add_child(slider.actor);
+      this.slider = new Slider.Slider(DEFAULT_VOLUME);
+      this.add_child(this.slider);
 
-      slider.connect("value-changed", this._onValueChanged.bind(this));
+      this.slider.connect("notify::value", this._onSliderChanged.bind(this));
 
       this.player = new SoundPlayer(sound);
 
@@ -82,9 +82,9 @@ var SoundBox = GObject.registerClass(
       });
     }
 
-    _onValueChanged(slider, value, property) {
+    _onSliderChanged() {
+      const value = this.slider.value;
       this.player.setVolume(value);
-
       this.sensitive = value > 0;
     }
   }
