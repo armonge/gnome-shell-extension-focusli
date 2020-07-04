@@ -38,11 +38,11 @@ const Popup = GObject.registerClass(
     _init() {
       super._init({
         reactive: false,
-        can_focus: false
+        can_focus: false,
       });
 
       this.box = new St.BoxLayout({
-        vertical: true
+        vertical: true,
       });
       this.add(this.box);
 
@@ -50,6 +50,8 @@ const Popup = GObject.registerClass(
       this.manager.connect("sounds-loaded", () => {
         this._onSoundsReady();
       });
+
+      this.manager.loadSounds();
     }
 
     _onSoundsReady() {
@@ -78,17 +80,17 @@ const Button = GObject.registerClass(
       super._init(0.0, "Focusli");
 
       let box = new St.BoxLayout({
-        style_class: "panel-status-menu-box"
+        style_class: "panel-status-menu-box",
       });
 
       let icon_path = GLib.build_filenamev([
         Extension.dir.get_path(),
-        "icon.png"
+        "icon.png",
       ]);
       let gicon = Gio.Icon.new_for_string(icon_path);
       let icon = new St.Icon({
         gicon: gicon,
-        style_class: "system-status-icon"
+        style_class: "system-status-icon",
       });
       box.add_child(icon);
       this.add_child(box);

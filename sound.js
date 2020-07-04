@@ -26,6 +26,8 @@ const Manager = Extension.imports.manager;
 const Slider = imports.ui.slider;
 const St = imports.gi.St;
 
+const Me = imports.misc.extensionUtils.getCurrentExtension();
+
 const DEFAULT_VOLUME = 0.5;
 
 var SoundBox = GObject.registerClass(
@@ -37,8 +39,8 @@ var SoundBox = GObject.registerClass(
         "Whether the widget is sensitive",
         GObject.ParamFlags.READWRITE | GObject.ParamFlags.CONSTRUCT,
         false
-      )
-    }
+      ),
+    },
   },
   class SoundBox extends St.BoxLayout {
     set sensitive(s) {
@@ -54,13 +56,17 @@ var SoundBox = GObject.registerClass(
     _init(sound) {
       super._init({
         style_class: "soundbox flat",
-        vertical: true
+        vertical: true,
       });
+
+      let gicon = Gio.icon_new_for_string(sound.icon);
+      // let icon = new St.Icon({ gicon });
 
       let icon = new St.Icon({
         style_class: "icon",
-        icon_name: sound.icon,
-        reactive: true
+        // icon_name: sound.icon,
+        gicon,
+        reactive: true,
       });
       this.add_child(icon);
 

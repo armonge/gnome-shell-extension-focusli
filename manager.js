@@ -20,6 +20,7 @@ const Extension = imports.misc.extensionUtils.getCurrentExtension();
 const GObject = imports.gi.GObject;
 const GLib = imports.gi.GLib;
 const Gio = imports.gi.Gio;
+const ByteArray = imports.byteArray;
 
 const SOUNDS_BASE_PATH = Extension.dir.get_child("sounds").get_path();
 const DB_PATH = GLib.build_filenamev([SOUNDS_BASE_PATH, "database.json"]);
@@ -27,8 +28,8 @@ const DB_PATH = GLib.build_filenamev([SOUNDS_BASE_PATH, "database.json"]);
 var Manager = GObject.registerClass(
   {
     Signals: {
-      "sounds-loaded": {}
-    }
+      "sounds-loaded": {},
+    },
   },
   class Manager extends GObject.Object {
     _init() {
@@ -37,19 +38,9 @@ var Manager = GObject.registerClass(
     }
 
     loadSounds() {
-      const file = Gio.File.new_for_path(DB_PATH);
-      file.load_contents_async(null, (file, res) => {
-        let contents;
-        try {
-          contents = file.load_contents_finish(res)[1].toString();
-          this.sounds = JSON.parse(contents)["sounds"];
-          this.emit("sounds-loaded");
-        } catch (e) {
-          log("No sounds loaded");
-          log(e);
-          return;
-        }
-      });
+      const contents = ByteArray.toString(GLib.file_get_contents(DB_PATH)[1]);
+      this.sounds = JSON.parse(contents)["sounds"];
+      this.emit("sounds-loaded");
     }
   }
 );
