@@ -21,9 +21,6 @@ const Gio = imports.gi.Gio;
 const GLib = imports.gi.GLib;
 const GObject = imports.gi.GObject;
 const Gst = imports.gi.Gst;
-const GstAudio = imports.gi.GstAudio;
-const Manager = Extension.imports.manager;
-const Slider = imports.ui.slider;
 const St = imports.gi.St;
 
 const Me = imports.misc.extensionUtils.getCurrentExtension();
@@ -70,11 +67,6 @@ var SoundBox = GObject.registerClass(
       });
       this.add_child(icon);
 
-      this.slider = new Slider.Slider(DEFAULT_VOLUME);
-      this.add_child(this.slider);
-
-      this.slider.connect("notify::value", this._onSliderChanged.bind(this));
-
       this.player = new SoundPlayer(sound);
 
       icon.connect("button-press-event", () => {
@@ -87,70 +79,26 @@ var SoundBox = GObject.registerClass(
         this.sensitive = !this.sensitive;
       });
     }
-
-    _onSliderChanged() {
-      const value = this.slider.value;
-      this.player.setVolume(value);
-      this.sensitive = value > 0;
-    }
   }
 );
 
 const SoundPlayer = class SoundPlayer {
   constructor(sound) {
-    this.playbin = Gst.ElementFactory.make("playbin", sound.name);
-    this.playbin.set_property("uri", this.getUri(sound));
-    this.sink = Gst.ElementFactory.make("pulsesink", "sink");
-    this.playbin.set_property("audio-sink", this.sink);
-
-    this.prerolled = false;
-    let bus = this.playbin.get_bus();
-    bus.add_signal_watch();
-    bus.connect("message", (bus, msg) => {
-      if (msg != null) this._onMessageReceived(msg);
-    });
+    this.sound = sound;
   }
 
   play() {
-    this.playbin.set_state(Gst.State.PLAYING);
+    this.cancellable = Gio.Cancellable.new();
+    this.player = global.display.get_sound_player();
+    this.soundFile = Gio.File.new_for_path(this.sound.uri);
+    this.player.play_from_file(
+      this.soundFile,
+      this.sound.name,
+      this.cancellable
+    );
   }
 
   pause() {
-    this.playbin.set_state(Gst.State.NULL);
-    this.prerolled = false;
-  }
-
-  setVolume(value) {
-    this.playbin.set_volume(GstAudio.StreamVolumeFormat.LINEAR, value);
-
-    let [rv, state, pstate] = this.playbin.get_state(Gst.State.NULL);
-    if (value == 0) {
-      this.playbin.set_state(Gst.State.NULL);
-    } else if (state != Gst.State.PLAYING) {
-      this.playbin.set_state(Gst.State.PLAYING);
-    }
-  }
-
-  _onMessageReceived(message) {
-    if (message.type == Gst.MessageType.SEGMENT_DONE) {
-      this.playbin.seek_simple(Gst.Format.TIME, Gst.SeekFlags.SEGMENT, 0);
-    }
-    if (message.type == Gst.MessageType.ASYNC_DONE) {
-      if (!this.prerolled) {
-        this.playbin.seek_simple(
-          Gst.Format.TIME,
-          Gst.SeekFlags.FLUSH | Gst.SeekFlags.SEGMENT,
-          0
-        );
-        this.prerolled = true;
-      }
-    }
-
-    return true;
-  }
-
-  getUri(sound) {
-    /* All URIs are relative to $HOME. */
-    return Gst.filename_to_uri(sound.uri);
+    this.cancellable.cancel();
   }
 };

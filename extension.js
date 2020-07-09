@@ -16,7 +16,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-var Gst = imports.gi.Gst;
+const Gst = imports.gi.Gst;
 
 const GObject = imports.gi.GObject;
 const Animation = imports.ui.animation;
