@@ -3,5 +3,5 @@
   "description": "Improve focus and increase your productive by listening to different sounds",
   "uuid": "focusli@armonge.info",
   "url": "https://github.com/armonge/gnome-shell-extension-focusli",
-  "shell-version": ["3.34", "3.36", "40", "41"]
+  "shell-version": ["3.34", "3.36", "40", "41", "42"]
 }
