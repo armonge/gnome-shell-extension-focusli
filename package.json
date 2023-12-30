@@ -1,0 +1,33 @@
+{
+    "name": "gnome-shell-extension-focusli",
+    "version": "45.0.0-beta5",
+    "description": "Simple Gnome Shell Hello World Extension example",
+    "type": "module",
+    "main": "dist/extension.js",
+    "private": true,
+    "sourceType": "module",
+    "scripts": {
+        "clear": "rm -rf dist",
+        "build:app": "node esbuild.js",
+        "build": "npm run clear && npm run build:app",
+        "validate": "tsc --noEmit"
+    },
+    "author": "Pascal Garber <pascal@artandcode.studio>",
+    "license": "MIT",
+    "devDependencies": {
+        "adm-zip": "^0.5.10",
+        "esbuild": "^0.19.8",
+        "eslint": "^8.56.0",
+        "prettier": "^3.1.1",
+        "typescript": "^5.3.2"
+    },
+    "dependencies": {
+        "@girs/gjs": "^3.2.6",
+        "@girs/glib-2.0": "^2.78.0-3.2.6",
+        "@girs/gnome-shell": "^45.0.0-beta5",
+        "@girs/gobject-2.0": "^2.78.0-3.2.6",
+        "@girs/gst-1.0": "^1.23.0-3.2.6",
+        "@girs/gstaudio-1.0": "^1.0.0-3.2.6",
+        "@girs/st-13": "^13.0.0-3.2.6"
+    }
+}
