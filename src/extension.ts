@@ -17,28 +17,24 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import '@girs/gjs'; // For global types like `log()`
+import {Extension, ExtensionMetadata} from 'resource:///org/gnome/shell/extensions/extension.js';
 
-import {Extension, ExtensionMetadata, gettext as _} from '@girs/gnome-shell/extensions/extension';
+import GLib from 'gi://GLib';
+import GObject from 'gi://GObject';
+import Gio from 'gi://Gio';
+import Gst from 'gi://Gst';
+import St from 'gi://St';
+import * as Main from 'resource:///org/gnome/shell/ui/main.js';
+import * as PanelMenu from 'resource:///org/gnome/shell/ui/panelMenu.js';
+import * as PopupMenu from 'resource:///org/gnome/shell/ui/popupMenu.js';
+import {Manager, TManager} from './manager.js';
+import {SoundBox} from './sound.js';
 
-import Gio from '@girs/gio-2.0';
-import GLib from '@girs/glib-2.0';
-import GObject from '@girs/gobject-2.0';
-import Gst from '@girs/gst-1.0';
-import St from '@girs/st-13';
-import * as Main from '@girs/gnome-shell/ui/main';
-import {Button as PanelMenuButton} from '@girs/gnome-shell/ui/panelMenu';
-import {PopupBaseMenuItem} from '@girs/gnome-shell/ui/popupMenu';
-import {Manager, TManager} from './manager';
-import {SoundBox} from './sound';
-
-Gst.init(null);
-
-class TPopup extends PopupBaseMenuItem {
+class TPopup extends PopupMenu.PopupBaseMenuItem {
     manager: TManager;
     box: St.BoxLayout
 
-    constructor() {
+    constructor(extension_dir: Gio.File) {
         super({
             reactive: false,
             can_focus: false,
@@ -54,7 +50,7 @@ class TPopup extends PopupBaseMenuItem {
             this._onSoundsReady();
         });
 
-        this.manager.loadSounds();
+        this.manager.loadSounds(extension_dir);
     }
 
     _onSoundsReady() {
@@ -77,52 +73,56 @@ class TPopup extends PopupBaseMenuItem {
 
 const Popup = GObject.registerClass(TPopup);
 
-class TButton extends PanelMenuButton {
-    constructor() {
+class TButton extends PanelMenu.Button {
+    constructor(extension_dir: Gio.File) {
         super(0.0, "Focusli");
-
-        const extension = Extension.lookupByUUID('focusli@armonge.info');
 
         let box = new St.BoxLayout({
             style_class: "panel-status-menu-box",
         });
 
         let icon_path = GLib.build_filenamev([
-            extension.dir.get_path(),
+            extension_dir.get_path()!,
             "icon.png",
         ]);
-        let gicon = Gio.Icon.new_for_string(icon_path);
         let icon = new St.Icon({
-            gicon: gicon,
+            gicon: Gio.Icon.new_for_string(icon_path),
             style_class: "system-status-icon",
         });
         box.add_child(icon);
         this.add_child(box);
 
-        let popup = new Popup();
+        let popup = new Popup(extension_dir);
         this.menu.addMenuItem(popup);
     }
 }
 const Button = GObject.registerClass(TButton);
 
 export default class FocusliExtension extends Extension {
-    button: TButton;
+    _button?: TButton | null;
     constructor(metadata: ExtensionMetadata) {
         super(metadata);
-        console.debug(`constructing ${this.metadata.name}`);
+        console.debug(`constructing ${metadata.name}`);
     }
 
 
     enable() {
         console.debug(`enabling ${this.metadata.name}`);
-        this.button = new Button();
-        Main.panel.addToStatusArea("focusli", this.button);
+
+        const gstLoaded = Gst.init_check(null);
+        if (!gstLoaded) {
+            return console.error("Gst couldn't be loaded")
+        }
+
+        this._button = new Button(this.dir);
+        Main.panel.addToStatusArea("focusli", this._button);
         console.debug(`enabled test ${this.metadata.name}`);
     }
 
     disable() {
         console.debug(`disabling ${this.metadata.name}`);
-        this.button.destroy();
+        this._button?.destroy();
+        this._button = null
     }
 
 }

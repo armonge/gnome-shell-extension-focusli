@@ -17,11 +17,9 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {Extension, gettext as _} from '@girs/gnome-shell/extensions/extension';
-import GObject from '@girs/gobject-2.0';
-import GLib from '@girs/glib-2.0';
-
-import '@girs/gjs/dom';
+import GLib from 'gi://GLib';
+import GObject from 'gi://GObject';
+import Gio from 'gi://Gio'
 
 export interface Sound {
     name: string;
@@ -30,11 +28,10 @@ export interface Sound {
 }
 
 export class TManager extends GObject.Object {
-    sounds: Sound[]
-    loadSounds() {
-        const extension = Extension.lookupByUUID('focusli@armonge.info');
-        const SOUNDS_BASE_PATH = extension.dir.get_child("sounds").get_path();
-        const DB_PATH = GLib.build_filenamev([SOUNDS_BASE_PATH, "database.json"]);
+    sounds: Sound[] = []
+    loadSounds(dir: Gio.File) {
+        const SOUNDS_BASE_PATH = dir.get_child("sounds").get_path();
+        const DB_PATH = GLib.build_filenamev([SOUNDS_BASE_PATH!, "database.json"]);
 
         const decoder = new TextDecoder();
         const contents = decoder.decode(GLib.file_get_contents(DB_PATH)[1])

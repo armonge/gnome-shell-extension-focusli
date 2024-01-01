@@ -20,11 +20,11 @@ build({
     // firefox78  // Since GJS 1.65.90
     // firefox91  // Since GJS 1.71.1
     // firefox102 // Since GJS 1.73.2
-    target: "firefox78",
+    target: "firefox102",
     platform: "neutral",
     // platform: "node",
     // mainFields: ['main'],
-    // conditions: ['require', 'default'],
+    conditions: ['import'],
     format: 'esm',
     external: ['gi://*', 'resource://*', 'system', 'gettext', 'cairo'],
 }).then(async () => {
@@ -46,9 +46,7 @@ build({
     await cp(iconSrc, iconDist);
     await cp(styleSrc, styleDist);
 
-    console.log("BEFORE", {soundsSrc, soundsDist})
     await cp(soundsSrc, soundsDist, {recursive: true});
-    console.log("HERE")
 
     const zip = new AdmZip();
     zip.addLocalFolder(resolve(__dirname, "dist"));

@@ -8,11 +8,11 @@
     "sourceType": "module",
     "scripts": {
         "clear": "rm -rf dist",
-        "build:app": "node esbuild.js",
+        "build:app": "./build.sh",
         "build": "npm run clear && npm run build:app",
         "validate": "tsc --noEmit"
     },
-    "author": "Pascal Garber <pascal@artandcode.studio>",
+    "author": "Andres Reyes Monge <armonge@gmail.com>",
     "license": "MIT",
     "devDependencies": {
         "adm-zip": "^0.5.10",
@@ -28,6 +28,7 @@
         "@girs/gobject-2.0": "^2.78.0-3.2.6",
         "@girs/gst-1.0": "^1.23.0-3.2.6",
         "@girs/gstaudio-1.0": "^1.0.0-3.2.6",
+        "@girs/shell-12": "^12.0.0-3.2.6",
         "@girs/st-13": "^13.0.0-3.2.6"
     }
 }

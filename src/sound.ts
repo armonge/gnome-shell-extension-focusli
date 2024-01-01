@@ -17,19 +17,19 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import Gio from '@girs/gio-2.0';
-import GObject from '@girs/gobject-2.0';
-import Gst from '@girs/gst-1.0';
-import GstAudio from '@girs/gstaudio-1.0';
-import St from '@girs/st-13';
-import {Slider} from '@girs/gnome-shell/ui/slider';
-import {Sound} from "./manager"
+import GObject from 'gi://GObject';
+import Gio from 'gi://Gio';
+import Gst from 'gi://Gst';
+import GstAudio from 'gi://GstAudio';
+import St from 'gi://St';
+import * as Slider from 'resource:///org/gnome/shell/ui/slider.js';
+import {Sound} from "./manager.js";
 
 const DEFAULT_VOLUME = 0.5;
 
 export class TSoundBox extends St.BoxLayout {
-    _sensitive: boolean
-    _slider: Slider
+    _sensitive: boolean = false
+    _slider: Slider.Slider
     _player: SoundPlayer
 
     set sensitive(s) {
@@ -48,21 +48,19 @@ export class TSoundBox extends St.BoxLayout {
             vertical: true,
         });
 
-        let gicon = Gio.icon_new_for_string(sound.icon);
+        this._slider = new Slider.Slider(DEFAULT_VOLUME);
+        this._player = new SoundPlayer(sound);
 
         let icon = new St.Icon({
             style_class: "icon",
-            gicon,
+            gicon: Gio.icon_new_for_string(sound.icon),
             reactive: true,
         });
-        this.add_child(icon);
 
-        this._slider = new Slider(DEFAULT_VOLUME);
-        this._slider.connect("notify::value", this._onSliderChanged.bind(this));
+        this.add_child(icon);
         this.add_child(this._slider);
 
-        this._player = new SoundPlayer(sound);
-
+        this._slider.connect("notify::value", this._onSliderChanged.bind(this));
         icon.connect("button-press-event", this._onButtonPress.bind(this));
     }
 
@@ -99,18 +97,25 @@ export const SoundBox = GObject.registerClass(
 );
 
 class SoundPlayer {
-    prerolled = false
-    playbin: Gst.Pipeline
-    sink: GstAudio.AudioBaseSink
+    _prerolled = false
+    _playbin: Gst.Pipeline
+    _sink: GstAudio.AudioBaseSink
+    _sound: Sound
+
+    get soundURI() {
+        /* All URIs are relative to $HOME. */
+        return Gst.filename_to_uri(this._sound.uri);
+    }
 
     constructor(sound: Sound) {
-        this.playbin = Gst.ElementFactory.make("playbin", sound.name) as Gst.Pipeline;
-        this.sink = Gst.ElementFactory.make("pulsesink", "sink") as GstAudio.AudioBaseSink;
+        this._sound = sound
+        this._playbin = Gst.ElementFactory.make("playbin", sound.name) as Gst.Pipeline;
+        this._sink = Gst.ElementFactory.make("pulsesink", "sink") as GstAudio.AudioBaseSink;
 
-        this.playbin.set_property("uri", this.getUri(sound));
-        this.playbin.set_property("audio-sink", this.sink);
+        this._playbin.set_property("uri", this.soundURI);
+        this._playbin.set_property("audio-sink", this._sink);
 
-        let bus = this.playbin.get_bus();
+        let bus = this._playbin.get_bus();
         bus.add_signal_watch();
         bus.connect("message", (_bus, msg) => {
             if (msg != null) this._onMessageReceived(msg);
@@ -118,45 +123,40 @@ class SoundPlayer {
     }
 
     play() {
-        this.playbin.set_state(Gst.State.PLAYING);
+        this._playbin.set_state(Gst.State.PLAYING);
     }
 
     pause() {
-        this.playbin.set_state(Gst.State.PAUSED);
-        this.prerolled = false;
+        this._playbin.set_state(Gst.State.PAUSED);
+        this._prerolled = false;
     }
 
     setVolume(value: number) {
-        this.playbin.set_volume(GstAudio.StreamVolumeFormat.LINEAR, value);
+        (this._playbin as any).set_volume(GstAudio.StreamVolumeFormat.LINEAR, value);
 
-        let [_rv, state, _pstate] = this.playbin.get_state(Gst.State.NULL);
+        let [_rv, state, _pstate] = this._playbin.get_state(Gst.State.NULL);
         if (value == 0) {
-            this.playbin.set_state(Gst.State.NULL);
+            this._playbin.set_state(Gst.State.NULL);
         } else if (state != Gst.State.PLAYING) {
-            this.playbin.set_state(Gst.State.PLAYING);
+            this._playbin.set_state(Gst.State.PLAYING);
         }
     }
 
     _onMessageReceived(message: Gst.Message) {
         if (message.type == Gst.MessageType.SEGMENT_DONE) {
-            this.playbin.seek_simple(Gst.Format.TIME, Gst.SeekFlags.SEGMENT, 0);
+            this._playbin.seek_simple(Gst.Format.TIME, Gst.SeekFlags.SEGMENT, 0);
         }
         if (message.type == Gst.MessageType.ASYNC_DONE) {
-            if (!this.prerolled) {
-                this.playbin.seek_simple(
+            if (!this._prerolled) {
+                this._playbin.seek_simple(
                     Gst.Format.TIME,
                     Gst.SeekFlags.FLUSH | Gst.SeekFlags.SEGMENT,
                     0
                 );
-                this.prerolled = true;
+                this._prerolled = true;
             }
         }
 
         return true;
-    }
-
-    getUri(sound: Sound) {
-        /* All URIs are relative to $HOME. */
-        return Gst.filename_to_uri(sound.uri);
     }
 };
