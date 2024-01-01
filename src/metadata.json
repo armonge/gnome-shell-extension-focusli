@@ -4,7 +4,6 @@
     "uuid": "focusli@armonge.info",
     "url": "https://github.com/armonge/gnome-shell-extension-focusli",
     "shell-version": [
-        "45",
-        "46"
+        "45"
     ]
 }
